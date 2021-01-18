@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "124747241263",
+    "project_id": "familytrackerapp-121b7",
+    "storage_bucket": "familytrackerapp-121b7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:124747241263:android:6306d4cdaae921854eb3da",
+        "android_client_info": {
+          "package_name": "com.mdshahsamir.familytracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "124747241263-b4ctgdpoqk3jnjiplvvvrud3hvs1n5n8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mdshahsamir.familytracker",
+            "certificate_hash": "26b53f3222ab57de3c31d4c57cf1532d86f4e371"
+          }
+        },
+        {
+          "client_id": "124747241263-abbgeifu71nfhnmd6oddtnpueocij9da.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0dnMGwPNgfHTvhkY5_HAclUy_BAKRfGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "124747241263-abbgeifu71nfhnmd6oddtnpueocij9da.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
