@@ -151,26 +151,7 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
 
     }
 
-    override fun onLocationChanged(location: Location?) {
-        mMap.clear()
-        if (location != null) {
-            mMap.addMarker(MarkerOptions().position(LatLng(location.latitude, location.longitude))
-                .title("My Location"))
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 12F))
-        }
-    }
 
-    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-
-    }
-
-    override fun onProviderEnabled(provider: String?) {
-
-    }
-
-    override fun onProviderDisabled(provider: String?) {
-
-    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -204,5 +185,12 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
         }
     }
+    }
+
+    override fun onLocationChanged(location: Location) {
+        mMap.clear()
+        mMap.addMarker(MarkerOptions().position(LatLng(location.latitude, location.longitude))
+            .title("My Location"))
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 12F))
     }
 }
