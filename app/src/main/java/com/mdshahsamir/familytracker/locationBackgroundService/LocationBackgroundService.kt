@@ -20,9 +20,11 @@ class LocationBackgroundService : BroadcastReceiver() {
                 if (result != null){
                     val location = result.lastLocation
                     try {
-                        Toast.makeText(context, location.toString(), Toast.LENGTH_SHORT).show()
+
+                        //Toast.makeText(context, location.toString(), Toast.LENGTH_SHORT).show()
                     }catch (ex : Exception){
-                        Toast.makeText(context, location.toString(), Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(context, location.toString(), Toast.LENGTH_SHORT).show()
+
                     }
                 }
             }

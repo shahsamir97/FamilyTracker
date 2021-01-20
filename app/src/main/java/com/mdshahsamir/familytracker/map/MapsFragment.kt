@@ -30,6 +30,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -90,6 +91,7 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
     }
+
 
     private fun checkUserGPSStatus(){
         val builder = LocationSettingsRequest.Builder()
@@ -189,6 +191,7 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
     private fun getPendingIntent(): PendingIntent? {
         val intent = Intent(context, LocationBackgroundService::class.java)
         intent.action = LocationBackgroundService.ACTION_PROCESS_UPDATES
+        intent.putExtra("uid", FirebaseAuth.getInstance().currentUser?.uid)
         return PendingIntent.getBroadcast(context,
                 0,
                 intent,
@@ -220,8 +223,7 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
     override fun onMapReady(googleMap: GoogleMap?) {
         if (googleMap != null) {
             mMap = googleMap
-
-    }
+        }
     }
 
     var temp = 0

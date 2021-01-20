@@ -2,11 +2,13 @@ package com.mdshahsamir.familytracker.login_register.login
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.mdshahsamir.familytracker.R
 import com.mdshahsamir.familytracker.databinding.LoginFragmentBinding
@@ -32,21 +34,20 @@ class Login : Fragment() {
 
         binding.loginButton.setOnClickListener {
             if (!binding.username.text.isNullOrEmpty() && !binding.password.text.isNullOrEmpty()){
-                auth.signInWithEmailAndPassword(binding.username.text.toString(), binding.password.text.toString())
+                auth.signInWithEmailAndPassword(binding.username.text.toString().trim(), binding.password.text.toString().trim())
                     .addOnCompleteListener(requireActivity()) { task ->
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
-
+                            it.findNavController().navigate(R.id.mapsFragment)
                         } else {
-                            // If sign in fails, display a message to the user.
-
+                            Log.e("Error :", task.exception.toString())
                         }
                     }
             }
         }
 
         binding.createAccountText.setOnClickListener {
-
+            it.findNavController().navigate(R.id.registerUser)
         }
     }
 

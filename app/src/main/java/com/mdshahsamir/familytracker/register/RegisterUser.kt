@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.mdshahsamir.familytracker.R
 import com.mdshahsamir.familytracker.databinding.RegisterUserFragmentBinding
@@ -36,7 +37,7 @@ class RegisterUser : Fragment() {
                     .addOnCompleteListener(requireActivity()) { task ->
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
-
+                            it.findNavController().navigate(R.id.mapsFragment)
                         } else {
                             // If sign in fails, display a message to the user.
 
