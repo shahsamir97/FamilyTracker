@@ -1,4 +1,4 @@
-package com.mdshahsamir.familytracker.login_register
+package com.mdshahsamir.familytracker.login_register.login
 
 import androidx.lifecycle.ViewModel
 
