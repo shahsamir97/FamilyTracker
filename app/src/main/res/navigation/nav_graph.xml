@@ -20,7 +20,8 @@
             app:destination="@id/registerUser" />
         <action
             android:id="@+id/action_login_to_mapsFragment"
-            app:destination="@id/mapsFragment" />
+            app:destination="@id/mapsFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/registerUser"

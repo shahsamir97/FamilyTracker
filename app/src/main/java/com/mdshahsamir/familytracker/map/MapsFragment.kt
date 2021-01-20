@@ -191,7 +191,6 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
     private fun getPendingIntent(): PendingIntent? {
         val intent = Intent(context, LocationBackgroundService::class.java)
         intent.action = LocationBackgroundService.ACTION_PROCESS_UPDATES
-        intent.putExtra("uid", FirebaseAuth.getInstance().currentUser?.uid)
         return PendingIntent.getBroadcast(context,
                 0,
                 intent,

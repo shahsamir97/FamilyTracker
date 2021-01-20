@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.mdshahsamir.familytracker.R
 import com.mdshahsamir.familytracker.databinding.LoginFragmentBinding
@@ -18,6 +19,7 @@ class Login : Fragment() {
     private lateinit var viewModel: LoginViewModel
     private lateinit var binding: LoginFragmentBinding
     private lateinit var auth: FirebaseAuth
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -31,6 +33,10 @@ class Login : Fragment() {
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
         auth = FirebaseAuth.getInstance()
+
+        if (auth.currentUser != null){
+
+        }
 
         binding.loginButton.setOnClickListener {
             if (!binding.username.text.isNullOrEmpty() && !binding.password.text.isNullOrEmpty()){
