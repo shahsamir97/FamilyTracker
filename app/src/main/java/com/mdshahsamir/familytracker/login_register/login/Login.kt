@@ -35,7 +35,7 @@ class Login : Fragment() {
         auth = FirebaseAuth.getInstance()
 
         if (auth.currentUser != null){
-
+            findNavController().navigate(R.id.mapsFragment)
         }
 
         binding.loginButton.setOnClickListener {
@@ -48,7 +48,9 @@ class Login : Fragment() {
                         } else {
                             Log.e("Error :", task.exception.toString())
                         }
-                    }
+                    }.addOnFailureListener {
+                        it.printStackTrace()
+                        }
             }
         }
 

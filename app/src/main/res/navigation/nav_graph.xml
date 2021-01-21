@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/login">
+    app:startDestination="@id/mapsFragment">
 
     <fragment
         android:id="@+id/mapsFragment"
@@ -20,8 +20,7 @@
             app:destination="@id/registerUser" />
         <action
             android:id="@+id/action_login_to_mapsFragment"
-            app:destination="@id/mapsFragment"
-            app:popUpToInclusive="false" />
+            app:destination="@id/mapsFragment" />
     </fragment>
     <fragment
         android:id="@+id/registerUser"
