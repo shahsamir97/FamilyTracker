@@ -8,28 +8,43 @@ import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.location.LocationResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.mdshahsamir.familytracker.model.UserLocationDataModel
 import java.lang.Exception
+import java.security.Timestamp
 
 
 class LocationBackgroundService : BroadcastReceiver() {
 
+    private lateinit var database: DatabaseReference
+    private lateinit var auth: FirebaseAuth
+
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.i("OnReceive", "Wroking")
+        auth = FirebaseAuth.getInstance()
         if(intent != null){
             if (intent.action == ACTION_PROCESS_UPDATES) {
                val result  = LocationResult.extractResult(intent)
                 if (result != null){
                     val location = result.lastLocation
                     try {
-                        FirebaseAuth.getInstance().currentUser?.let { Log.i("User ID \n", it.uid) }
+                        updateLocationOnRemoteDatabase(location)
+                        Toast.makeText(context, auth.currentUser?.uid, Toast.LENGTH_SHORT).show()
                         Toast.makeText(context, location.toString(), Toast.LENGTH_SHORT).show()
                     }catch (ex : Exception){
+                        updateLocationOnRemoteDatabase(location)
                         Toast.makeText(context, location.toString(), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         }
+    }
+
+    private fun updateLocationOnRemoteDatabase(location: Location){
+        database = Firebase.database.reference
+        database.child("location").child(auth.currentUser?.uid.toString()).setValue(UserLocationDataModel(location.latitude, location.longitude))
     }
 
     companion object{
