@@ -14,6 +14,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,13 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.ktx.Firebase
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -45,6 +53,7 @@ import com.karumi.dexter.listener.single.PermissionListener
 import com.mdshahsamir.familytracker.R
 import com.mdshahsamir.familytracker.databinding.FragmentMapsBinding
 import com.mdshahsamir.familytracker.locationBackgroundService.LocationBackgroundService
+import com.mdshahsamir.familytracker.model.UserLocationDataModel
 import java.security.Permission
 
 
@@ -57,6 +66,10 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
     private lateinit var locationRequest: LocationRequest
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var geofencingClient: GeofencingClient
+
+    private lateinit var database: DatabaseReference
+// ...
+
     val BACKGROUND_LOCATION_REQUEST = 1
     val FOREGROUND_LOCATION_REQUEST = 2
     val FOREGROUND_AND_BACKGROUND_LOCATION_REQUEST_CODE = 33
@@ -101,14 +114,31 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
     override fun onMapReady(googleMap: GoogleMap?) {
         if (googleMap != null) {
             mMap = googleMap
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
+            }
+            mMap.isMyLocationEnabled = true
+
+            database = Firebase.database.reference
+            database.child("location").addValueEventListener(object  : ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
 
 
-          if (isForegroundLocationPermissionGranted()){
-              if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                  return
-              }
-              mMap.isMyLocationEnabled = true
-          }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+
+            }
+            )
         }
     }
 
@@ -124,19 +154,6 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
         requestPermissions(permissions, FOREGROUND_LOCATION_REQUEST)
     }
 
-
-    private fun isForegroundLocationPermissionGranted(): Boolean{
-        return (ActivityCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun isBackgroundLocationPermissionGranted(): Boolean{
-        return ActivityCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
-    }
 
     //Checking whether user GPS location is turned on. If not ask to turn on
     private fun checkUserGPSStatus(){
@@ -262,8 +279,8 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
 
     override fun onLocationChanged(location: Location) {
         mMap.clear()
-        /*val myLocation = LatLng(location.latitude, location.longitude)
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12F))*/
+        val myLocation = LatLng(location.latitude, location.longitude)
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12F))
     }
 
     override fun onProviderEnabled(provider: String) {}

@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -44,12 +45,14 @@ class Login : Fragment() {
                     .addOnCompleteListener(requireActivity()) { task ->
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
+                                Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT).show()
                             it.findNavController().navigate(R.id.mapsFragment)
                         } else {
                             Log.e("Error :", task.exception.toString())
                         }
                     }.addOnFailureListener {
                         it.printStackTrace()
+                        Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()
                         }
             }
         }
