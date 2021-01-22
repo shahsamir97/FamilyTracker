@@ -42,7 +42,7 @@ class Login : Fragment() {
         auth = FirebaseAuth.getInstance()
 
         if (auth.currentUser != null){
-            findNavController().navigate(R.id.mapsFragment)
+            findNavController().navigate(LoginDirections.actionLoginToMapsFragment())
         }
 
         binding.loginButton.setOnClickListener {
@@ -53,7 +53,7 @@ class Login : Fragment() {
                             if (task.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
                                     Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT).show()
-                                it.findNavController().navigate(R.id.mapsFragment)
+                                it.findNavController().navigate(LoginDirections.actionLoginToMapsFragment())
                             } else {
                                 Log.e("Error :", task.exception.toString())
                             }
@@ -68,7 +68,7 @@ class Login : Fragment() {
         }
 
         binding.createAccountText.setOnClickListener {
-            it.findNavController().navigate(R.id.registerUser)
+            it.findNavController().navigate(LoginDirections.actionLoginToRegisterUser())
         }
     }
 

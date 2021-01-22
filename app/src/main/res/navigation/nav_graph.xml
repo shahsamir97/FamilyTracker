@@ -9,7 +9,12 @@
         android:id="@+id/mapsFragment"
         android:name="com.mdshahsamir.familytracker.map.MapsFragment"
         android:label="fragment_maps"
-        tools:layout="@layout/fragment_maps" />
+        tools:layout="@layout/fragment_maps" >
+        <action
+            android:id="@+id/action_mapsFragment_to_login"
+            app:destination="@id/login" />
+    </fragment>
+
     <fragment
         android:id="@+id/login"
         android:name="com.mdshahsamir.familytracker.login_register.login.Login"
@@ -17,11 +22,26 @@
         tools:layout="@layout/login_fragment">
         <action
             android:id="@+id/action_login_to_mapsFragment"
-            app:destination="@id/mapsFragment" />
+            app:destination="@id/mapsFragment"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/login"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_login_to_registerUser"
+            app:destination="@id/registerUser"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left" />
     </fragment>
+
     <fragment
         android:id="@+id/registerUser"
         android:name="com.mdshahsamir.familytracker.register.RegisterUser"
         android:label="RegisterUser"
-        tools:layout="@layout/register_user_fragment"/>
+        tools:layout="@layout/register_user_fragment">
+        <action
+            android:id="@+id/action_registerUser_to_mapsFragment"
+            app:destination="@id/mapsFragment"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/registerUser" />
+    </fragment>
 </navigation>

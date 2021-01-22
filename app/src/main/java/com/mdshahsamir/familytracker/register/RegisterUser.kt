@@ -60,7 +60,7 @@ class RegisterUser : Fragment() {
                 .build()
         FirebaseAuth.getInstance()
                 .currentUser?.updateProfile(profileChangeRequest)?.addOnSuccessListener {
-            findNavController().navigate(R.id.mapsFragment)
+            findNavController().navigate(RegisterUserDirections.actionRegisterUserToMapsFragment())
         }
     }
 

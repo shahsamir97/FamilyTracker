@@ -118,7 +118,8 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
 
 
             mapsViewModel.allPermissionsGranted.observe(viewLifecycleOwner, Observer {
-                if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     mMap.isMyLocationEnabled = it
                 }
             })
@@ -132,21 +133,15 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
                             return
                         }
                         val location = it.getValue<UserLocationDataModel>()
-                        Log.i(TAG.toString(), location?.latitude.toString()
-                                + " ::" + location?.userDisplayName + " ::"
-                                + it.key.toString())
 
                         if (location != null) {
                             mMap.addMarker(MarkerOptions()
                                     .position(LatLng(location.latitude, location.longitude))
                                     .title(location.userDisplayName))
                                     .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE))
-
-
                         }
                     }
                 }
-
                 override fun onCancelled(error: DatabaseError) {
 
                 }
@@ -327,9 +322,5 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
     //ENDS... location listener callbacks ends here
 
-    override fun onStop() {
-        super.onStop()
-        FirebaseAuth.getInstance().signOut()
 
-    }
 }
