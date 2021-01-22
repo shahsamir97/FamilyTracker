@@ -36,6 +36,7 @@ class Login : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
         auth = FirebaseAuth.getInstance()

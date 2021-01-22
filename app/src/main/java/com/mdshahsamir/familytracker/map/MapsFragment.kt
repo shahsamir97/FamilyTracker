@@ -1,13 +1,14 @@
 package com.mdshahsamir.familytracker.map
 
+import com.mdshahsamir.familytracker.R
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -18,18 +19,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
@@ -42,19 +46,10 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.karumi.dexter.listener.single.PermissionListener
-import com.mdshahsamir.familytracker.R
+import com.google.maps.android.ui.IconGenerator
 import com.mdshahsamir.familytracker.databinding.FragmentMapsBinding
 import com.mdshahsamir.familytracker.locationBackgroundService.LocationBackgroundService
 import com.mdshahsamir.familytracker.model.UserLocationDataModel
-import java.security.Permission
 
 
 class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
@@ -66,13 +61,12 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
     private lateinit var locationRequest: LocationRequest
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var geofencingClient: GeofencingClient
+    private lateinit var mapsViewModel: MapsViewModel
 
     val TAG = MapsFragment::class.java
 
     private lateinit var database: DatabaseReference
-// ...
 
-    val BACKGROUND_LOCATION_REQUEST = 1
     val FOREGROUND_LOCATION_REQUEST = 2
     val FOREGROUND_AND_BACKGROUND_LOCATION_REQUEST_CODE = 33
     val ACCESS_FINE_LOCATION_INDEX = 0
@@ -96,6 +90,7 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
         geofencingClient = LocationServices.getGeofencingClient(requireContext())
 
@@ -109,51 +104,81 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
-        //checking all location permissions
+
+        mapsViewModel = ViewModelProvider(this).get(MapsViewModel::class.java)
+        //Checks all permissions
         checkPermissions()
+
+
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
         if (googleMap != null) {
             mMap = googleMap
-            if (ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                return
-            }
-            mMap.isMyLocationEnabled = true
+
+
+            mapsViewModel.allPermissionsGranted.observe(viewLifecycleOwner, Observer {
+                if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    mMap.isMyLocationEnabled = it
+                }
+            })
 
             database = Firebase.database.reference
-            database.child("location").addValueEventListener(object  : ValueEventListener{
+            database.child("location").addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    mMap.clear()
                     snapshot.children.forEach {
-                        if (it.key == FirebaseAuth.getInstance().currentUser?.uid){
+                        if (it.key == FirebaseAuth.getInstance().currentUser?.uid) {
                             return
                         }
                         val location = it.getValue<UserLocationDataModel>()
-                        Log.i(TAG.toString(), location?.latitude.toString() +" ::" +location?.userDisplayName+" ::" + it.key.toString())
+                        Log.i(TAG.toString(), location?.latitude.toString()
+                                + " ::" + location?.userDisplayName + " ::"
+                                + it.key.toString())
+
                         if (location != null) {
-                            mMap.addMarker(MarkerOptions().position(LatLng(location.latitude, location.longitude)).title(location.userDisplayName)).showInfoWindow()
+                            mMap.addMarker(MarkerOptions()
+                                    .position(LatLng(location.latitude, location.longitude))
+                                    .title(location.userDisplayName))
+                                    .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE))
+
+
                         }
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
-                }
 
+                }
+            })
+        }
+
+
+    }
+
+    private fun createMapMarker(location: UserLocationDataModel){
+
+    }
+
+    private fun checkPermissions(){
+        //checking all location permissions
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                    mapsViewModel.allPermissionsGranted.value = true
+                }else{
+                    requestPermission()
+                }
+            }else{
+                mapsViewModel.allPermissionsGranted.value = true
             }
-            )
+        }else{
+            requestPermission()
         }
     }
 
-    //checks for all permission and requests for all permissions
-    private fun checkPermissions(){
+    //Requests for all permissions
+    private fun requestPermission(){
 
         var permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
@@ -172,12 +197,6 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
 
         val client: SettingsClient = LocationServices.getSettingsClient(requireActivity())
         val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
-
-        if (task.isSuccessful){
-          //  Toast.makeText(requireContext(), "Location Enabled", Toast.LENGTH_LONG).show()
-        }else{
-          //  Toast.makeText(requireContext(), "Location Disabled", Toast.LENGTH_SHORT).show()
-        }
 
         task.addOnFailureListener { exception ->
             if (exception is ResolvableApiException){
@@ -252,32 +271,36 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode){
             //Foreground location permission
-            FOREGROUND_LOCATION_REQUEST ->{
-                if (grantResults[ACCESS_FINE_LOCATION_INDEX] == PackageManager.PERMISSION_GRANTED){
+            FOREGROUND_LOCATION_REQUEST -> {
+                if (grantResults[ACCESS_FINE_LOCATION_INDEX] == PackageManager.PERMISSION_GRANTED) {
                     //permission granted
                     if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         return
                     }
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
                     updateLocation()
-                }else{
+                    mapsViewModel.allPermissionsGranted.value = true
+                } else {
                     //permission not granted
                     Snackbar.make(binding.map, " You need to grant location permission in order to use this app", Snackbar.LENGTH_INDEFINITE)
+                    mapsViewModel.allPermissionsGranted.value = false
                 }
             }
             //background location permission
-            FOREGROUND_AND_BACKGROUND_LOCATION_REQUEST_CODE ->{
+            FOREGROUND_AND_BACKGROUND_LOCATION_REQUEST_CODE -> {
                 if (grantResults[ACCESS_FINE_LOCATION_INDEX] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[ACCESS_BACKGROUND_LOCATION_INDEX] == PackageManager.PERMISSION_GRANTED){
+                        && grantResults[ACCESS_BACKGROUND_LOCATION_INDEX] == PackageManager.PERMISSION_GRANTED) {
                     //permission granted
                     if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         return
                     }
                     updateLocation()
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0f, this)
-                }else{
+                    mapsViewModel.allPermissionsGranted.value = true
+                } else {
                     //Permission not granted
                     Snackbar.make(binding.map, " You need to grant location permission in order to use this app", Snackbar.LENGTH_INDEFINITE)
+                    mapsViewModel.allPermissionsGranted.value = false
                 }
             }
         }
