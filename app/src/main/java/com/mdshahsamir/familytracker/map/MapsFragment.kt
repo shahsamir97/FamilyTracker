@@ -67,6 +67,8 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var geofencingClient: GeofencingClient
 
+    val TAG = MapsFragment::class.java
+
     private lateinit var database: DatabaseReference
 // ...
 
@@ -129,8 +131,16 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
             database = Firebase.database.reference
             database.child("location").addValueEventListener(object  : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
-
-
+                    snapshot.children.forEach {
+                        if (it.key == FirebaseAuth.getInstance().currentUser?.uid){
+                            return
+                        }
+                        val location = it.getValue<UserLocationDataModel>()
+                        Log.i(TAG.toString(), location?.latitude.toString() +" ::" +location?.userDisplayName+" ::" + it.key.toString())
+                        if (location != null) {
+                            mMap.addMarker(MarkerOptions().position(LatLng(location.latitude, location.longitude)).title(location.userDisplayName)).showInfoWindow()
+                        }
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -203,6 +213,7 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
     }
 
 
+    //Request location update even when the app is in background or killed
     private fun updateLocation() {
         context?.let { context ->
         buildLocationRequest()
@@ -277,10 +288,13 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
     //STARTS...Location listener callbacks start here
     //Tells about users current location updated every time the user device change it's current location
 
+    var temp = 0
     override fun onLocationChanged(location: Location) {
-        mMap.clear()
-        val myLocation = LatLng(location.latitude, location.longitude)
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12F))
+        if(temp == 0) {
+            val myLocation = LatLng(location.latitude, location.longitude)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12F))
+        }
+        temp = 1
     }
 
     override fun onProviderEnabled(provider: String) {}
@@ -289,4 +303,10 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
     //ENDS... location listener callbacks ends here
+
+    override fun onStop() {
+        super.onStop()
+        FirebaseAuth.getInstance().signOut()
+
+    }
 }

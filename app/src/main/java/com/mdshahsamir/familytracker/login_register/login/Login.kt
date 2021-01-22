@@ -12,6 +12,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.initialize
 import com.mdshahsamir.familytracker.R
 import com.mdshahsamir.familytracker.databinding.LoginFragmentBinding
 
@@ -25,6 +28,8 @@ class Login : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.login_fragment, container, false)
+
+        Firebase.initialize(requireContext())
 
         return binding.root
     }
@@ -41,19 +46,23 @@ class Login : Fragment() {
 
         binding.loginButton.setOnClickListener {
             if (!binding.username.text.isNullOrEmpty() && !binding.password.text.isNullOrEmpty()){
-                auth.signInWithEmailAndPassword(binding.username.text.toString().trim(), binding.password.text.toString().trim())
-                    .addOnCompleteListener(requireActivity()) { task ->
-                        if (task.isSuccessful) {
-                            // Sign in success, update UI with the signed-in user's information
-                                Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT).show()
-                            it.findNavController().navigate(R.id.mapsFragment)
-                        } else {
-                            Log.e("Error :", task.exception.toString())
-                        }
-                    }.addOnFailureListener {
-                        it.printStackTrace()
-                        Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()
-                        }
+                try {
+                    auth.signInWithEmailAndPassword(binding.username.text.toString().trim(), binding.password.text.toString().trim())
+                        .addOnCompleteListener(requireActivity()) { task ->
+                            if (task.isSuccessful) {
+                                // Sign in success, update UI with the signed-in user's information
+                                    Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT).show()
+                                it.findNavController().navigate(R.id.mapsFragment)
+                            } else {
+                                Log.e("Error :", task.exception.toString())
+                            }
+                        }.addOnFailureListener {
+                            it.printStackTrace()
+                            Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()
+                            }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
 

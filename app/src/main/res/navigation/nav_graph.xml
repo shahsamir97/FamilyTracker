@@ -16,9 +16,6 @@
         android:label="Login"
         tools:layout="@layout/login_fragment">
         <action
-            android:id="@+id/action_login_to_registerUser"
-            app:destination="@id/registerUser" />
-        <action
             android:id="@+id/action_login_to_mapsFragment"
             app:destination="@id/mapsFragment" />
     </fragment>
