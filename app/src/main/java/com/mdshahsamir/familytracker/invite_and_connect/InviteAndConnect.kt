@@ -35,8 +35,12 @@ class InviteAndConnect : Fragment() {
         viewPager.adapter = viewPagerAdapter
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = if (position == 0) "Connect" else "Invite"
-            tab.setIcon(if (position == 0) R.drawable.connect_member_icon else R.drawable.invite_member_icon)
+            tab.text = when(position){
+                0-> "Connect"
+                1->"Invite"
+                else->"Requests"
+            }
+            //tab.setIcon(if (position == 0) R.drawable.connect_member_icon else R.drawable.invite_member_icon)
         }.attach()
     }
 
