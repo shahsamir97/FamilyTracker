@@ -11,9 +11,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.mdshahsamir.familytracker.model.UserLocationDataModel
+import com.mdshahsamir.familytracker.data_models.UserLocationDataModel
 import java.lang.Exception
-import java.security.Timestamp
 
 
 class LocationBackgroundService : BroadcastReceiver() {
@@ -31,7 +30,6 @@ class LocationBackgroundService : BroadcastReceiver() {
                     val location = result.lastLocation
                     try {
                         updateLocationOnRemoteDatabase(location)
-                        Toast.makeText(context, auth.currentUser?.uid, Toast.LENGTH_SHORT).show()
                         Toast.makeText(context, location.toString(), Toast.LENGTH_SHORT).show()
                     }catch (ex : Exception){
                         updateLocationOnRemoteDatabase(location)

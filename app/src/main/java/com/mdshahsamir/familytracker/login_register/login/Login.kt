@@ -42,7 +42,8 @@ class Login : Fragment() {
         auth = FirebaseAuth.getInstance()
 
         if (auth.currentUser != null){
-            findNavController().navigate(LoginDirections.actionLoginToMapsFragment())
+          //  findNavController().navigate(LoginDirections.actionLoginToMapsFragment())
+            findNavController().navigate(R.id.inviteAndConnect)
         }
 
         binding.loginButton.setOnClickListener {
@@ -52,8 +53,10 @@ class Login : Fragment() {
                         .addOnCompleteListener(requireActivity()) { task ->
                             if (task.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
-                                    Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT).show()
-                                it.findNavController().navigate(LoginDirections.actionLoginToMapsFragment())
+                                Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT).show()
+                                    //TODO:: Navigate to map fragment commented out for testing invitation page don't forget to uncomment and delete the invite page navigation
+                               // it.findNavController().navigate(LoginDirections.actionLoginToMapsFragment())
+                                findNavController().navigate(R.id.inviteAndConnect)
                             } else {
                                 Log.e("Error :", task.exception.toString())
                             }

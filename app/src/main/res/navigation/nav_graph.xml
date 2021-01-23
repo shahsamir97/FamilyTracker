@@ -44,4 +44,9 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popUpTo="@id/registerUser" />
     </fragment>
+    <fragment
+        android:id="@+id/inviteAndConnect"
+        android:name="com.mdshahsamir.familytracker.invite_and_connect.InviteAndConnect"
+        android:label="fragment_invite_and_connect"
+        tools:layout="@layout/fragment_invite_and_connect" />
 </navigation>

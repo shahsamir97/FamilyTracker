@@ -8,21 +8,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -46,10 +41,9 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
-import com.google.maps.android.ui.IconGenerator
 import com.mdshahsamir.familytracker.databinding.FragmentMapsBinding
 import com.mdshahsamir.familytracker.locationBackgroundService.LocationBackgroundService
-import com.mdshahsamir.familytracker.model.UserLocationDataModel
+import com.mdshahsamir.familytracker.data_models.UserLocationDataModel
 
 
 class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
@@ -62,8 +56,6 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var geofencingClient: GeofencingClient
     private lateinit var mapsViewModel: MapsViewModel
-
-    val TAG = MapsFragment::class.java
 
     private lateinit var database: DatabaseReference
 
@@ -151,9 +143,6 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
 
     }
 
-    private fun createMapMarker(location: UserLocationDataModel){
-
-    }
 
     private fun checkPermissions(){
         //checking all location permissions
@@ -198,7 +187,7 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
                 // Location settings are not satisfied, but this can be fixed
                 // by showing the user a dialog.
                 try {
-                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    //val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                     //startActivity(intent)
                     exception.startResolutionForResult(requireActivity(), 1)
                 } catch (sendEx: IntentSender.SendIntentException) {

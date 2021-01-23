@@ -1,4 +1,4 @@
-package com.mdshahsamir.familytracker.model
+package com.mdshahsamir.familytracker.data_models
 
 import com.google.firebase.database.IgnoreExtraProperties
 
