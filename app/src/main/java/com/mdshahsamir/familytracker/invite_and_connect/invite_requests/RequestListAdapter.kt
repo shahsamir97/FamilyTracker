@@ -40,7 +40,7 @@ class RequestListDiffCallback : DiffUtil.ItemCallback<InvitationDataModel>() {
         oldItem: InvitationDataModel,
         newItem: InvitationDataModel
     ): Boolean {
-        return oldItem.senderUid == newItem.senderUid
+        return oldItem == newItem
     }
 
     override fun areContentsTheSame(
