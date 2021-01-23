@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthEmailException
 import com.google.firebase.auth.FirebaseUser
@@ -46,8 +47,10 @@ class InviteMembers : Fragment() {
 
         binding.inviteButton.setOnClickListener {
             val emailText = binding.email.text.toString().trim()
-            if (emailText.isNotEmpty()){
+            if (emailText.isNotEmpty() && emailText != currentUser.email){
              sendInvitation(emailText)
+            }else{
+                Snackbar.make(binding.root,"Put correct email address", Snackbar.LENGTH_LONG).show()
             }
         }
     }
@@ -59,9 +62,9 @@ class InviteMembers : Fragment() {
             status = false,
             senderUid = currentUser.uid)
         database.child("invitations").push().setValue(invitation).addOnSuccessListener {
-            Toast.makeText(requireContext(), "Invitation Sent", Toast.LENGTH_SHORT).show()
+            Snackbar.make(binding.root,"Invitation Sent!", Snackbar.LENGTH_LONG).show()
         }.addOnFailureListener {
-            Toast.makeText(requireContext(), "Invitation Failed", Toast.LENGTH_SHORT).show()
+            Snackbar.make(binding.root,"Failed to send invitation! Try again", Snackbar.LENGTH_LONG).show()
         }
     }
 
