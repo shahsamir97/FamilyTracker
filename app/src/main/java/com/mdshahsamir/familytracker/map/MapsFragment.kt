@@ -13,6 +13,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -41,6 +43,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import com.mdshahsamir.familytracker.RemoteDatabase.RemoteDatabase
 import com.mdshahsamir.familytracker.databinding.FragmentMapsBinding
 import com.mdshahsamir.familytracker.locationBackgroundService.LocationBackgroundService
 import com.mdshahsamir.familytracker.data_models.UserLocationDataModel
@@ -89,7 +92,9 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
 
         locationManager = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-
+        binding.floatingActionButton.setOnClickListener {
+            findNavController().navigate(R.id.inviteAndConnect)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -118,7 +123,7 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
             })
 
             database = Firebase.database.reference
-            getConnectedMembersLocation()
+            getConnectedMembers()
         }
     }
 
@@ -129,36 +134,38 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
                 snapshot.children.forEach {
                     connectedMembers.add(it.getValue<String>()!!)
                 }
+                getConnectedMembersLocation(connectedMembers)
             }
 
             override fun onCancelled(error: DatabaseError) {}
-
         })
     }
 
-    private fun getConnectedMembersLocation(){
-
-        database.child("location").addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                mMap.clear()
-                snapshot.children.forEach {
-                    if (it.key == FirebaseAuth.getInstance().currentUser?.uid) {
-                        return
-                    }
-                    val location = it.getValue<UserLocationDataModel>()
-
-                    if (location != null) {
-                        mMap.addMarker(MarkerOptions()
-                                .position(LatLng(location.latitude, location.longitude))
-                                .title(location.userDisplayName))
-                                .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE))
+    private fun getConnectedMembersLocation(connectedMember: ArrayList<String>){
+            Log.i("MAPS", connectedMember.size.toString())
+            database.child("location").addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.children.forEach {
+                        for (member in connectedMember) {
+                            if (member == it.key){
+                                mMap.clear()
+                                val location = it.getValue<UserLocationDataModel>()
+                                if (location != null) {
+                                    mMap.addMarker(MarkerOptions()
+                                            .position(LatLng(location.latitude, location.longitude))
+                                            .title(location.userDisplayName))
+                                            .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE))
+                                }
+                            }
+                        }
                     }
                 }
-            }
-            override fun onCancelled(error: DatabaseError) {
+                override fun onCancelled(error: DatabaseError) {
 
-            }
-        })
+                }
+            })
+
+
 
     }
 
@@ -316,6 +323,7 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
 
     var temp = 0
     override fun onLocationChanged(location: Location) {
+        RemoteDatabase.updateLocationOnRemoteDatabase(location)
         if(temp == 0) {
             val myLocation = LatLng(location.latitude, location.longitude)
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12F))

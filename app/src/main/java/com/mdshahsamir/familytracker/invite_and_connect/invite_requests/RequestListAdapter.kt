@@ -34,8 +34,8 @@ class RequestListAdapter(var requests: ArrayList<DatabaseReference>) : ListAdapt
 
         private fun saveInConnections(senderUid: String){
             database = Firebase.database.reference
-            database.child("connections").child(FirebaseAuth.getInstance().currentUser!!.uid).setValue(senderUid)
-            database.child("connections").child(senderUid).setValue(FirebaseAuth.getInstance().currentUser?.uid)
+            database.child("connections").child(FirebaseAuth.getInstance().currentUser!!.uid).push().setValue(senderUid)
+            database.child("connections").child(senderUid).push().setValue(FirebaseAuth.getInstance().currentUser?.uid)
         }
 
         companion object{

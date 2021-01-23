@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.ktx.Firebase
@@ -42,8 +43,7 @@ class Login : Fragment() {
         auth = FirebaseAuth.getInstance()
 
         if (auth.currentUser != null){
-          //  findNavController().navigate(LoginDirections.actionLoginToMapsFragment())
-            findNavController().navigate(R.id.inviteAndConnect)
+            findNavController().navigate(LoginDirections.actionLoginToMapsFragment())
         }
 
         binding.loginButton.setOnClickListener {
@@ -53,16 +53,14 @@ class Login : Fragment() {
                         .addOnCompleteListener(requireActivity()) { task ->
                             if (task.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
-                                Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT).show()
-                                    //TODO:: Navigate to map fragment commented out for testing invitation page don't forget to uncomment and delete the invite page navigation
-                               // it.findNavController().navigate(LoginDirections.actionLoginToMapsFragment())
-                                findNavController().navigate(R.id.inviteAndConnect)
+                                Snackbar.make(binding.root,"Login Successful", Snackbar.LENGTH_LONG).show()
+                                it.findNavController().navigate(LoginDirections.actionLoginToMapsFragment())
                             } else {
                                 Log.e("Error :", task.exception.toString())
                             }
                         }.addOnFailureListener {
                             it.printStackTrace()
-                            Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()
+                                Snackbar.make(binding.root,"Login Failed", Snackbar.LENGTH_LONG).show()
                             }
                 } catch (e: Exception) {
                     e.printStackTrace()
