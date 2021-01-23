@@ -56,6 +56,7 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var geofencingClient: GeofencingClient
     private lateinit var mapsViewModel: MapsViewModel
+    private var connectedMembers: ArrayList<String> = ArrayList()
 
     private lateinit var database: DatabaseReference
 
@@ -117,29 +118,47 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
             })
 
             database = Firebase.database.reference
-            database.child("location").addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    mMap.clear()
-                    snapshot.children.forEach {
-                        if (it.key == FirebaseAuth.getInstance().currentUser?.uid) {
-                            return
-                        }
-                        val location = it.getValue<UserLocationDataModel>()
+            getConnectedMembersLocation()
+        }
+    }
 
-                        if (location != null) {
-                            mMap.addMarker(MarkerOptions()
-                                    .position(LatLng(location.latitude, location.longitude))
-                                    .title(location.userDisplayName))
-                                    .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE))
-                        }
+    private  fun getConnectedMembers(){
+        //TODO:: get connected members list and place them
+        database.child("connections").child(FirebaseAuth.getInstance().currentUser?.uid!!).addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach {
+                    connectedMembers.add(it.getValue<String>()!!)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+
+        })
+    }
+
+    private fun getConnectedMembersLocation(){
+
+        database.child("location").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                mMap.clear()
+                snapshot.children.forEach {
+                    if (it.key == FirebaseAuth.getInstance().currentUser?.uid) {
+                        return
+                    }
+                    val location = it.getValue<UserLocationDataModel>()
+
+                    if (location != null) {
+                        mMap.addMarker(MarkerOptions()
+                                .position(LatLng(location.latitude, location.longitude))
+                                .title(location.userDisplayName))
+                                .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE))
                     }
                 }
-                override fun onCancelled(error: DatabaseError) {
+            }
+            override fun onCancelled(error: DatabaseError) {
 
-                }
-            })
-        }
-
+            }
+        })
 
     }
 

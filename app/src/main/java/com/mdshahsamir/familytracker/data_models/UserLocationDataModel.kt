@@ -7,11 +7,13 @@ class UserLocationDataModel() {
     var latitude: Double = 0.0
     var longitude: Double = 0.0
     var userDisplayName = ""
+    var userId = ""
 
-    constructor(latitude: Double, longitude: Double, userDisplayName: String) : this() {
+    constructor(userId: String, latitude: Double, longitude: Double, userDisplayName: String) : this() {
         this.latitude = latitude
         this.longitude = longitude
         this.userDisplayName = userDisplayName
+        this.userId = userId
     }
 
 }

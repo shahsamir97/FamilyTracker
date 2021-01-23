@@ -5,15 +5,37 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.mdshahsamir.familytracker.data_models.InvitationDataModel
 import com.mdshahsamir.familytracker.databinding.InviteReqItemBinding
 
-class RequestListAdapter : ListAdapter<InvitationDataModel, RequestListAdapter.InviteViewHolder>(RequestListDiffCallback()){
+
+class RequestListAdapter(var requests: ArrayList<DatabaseReference>) : ListAdapter<InvitationDataModel, RequestListAdapter.InviteViewHolder>(RequestListDiffCallback()){
+
+
 
     class InviteViewHolder(var binding: InviteReqItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(inviteRequest: InvitationDataModel) {
+        private lateinit var database: DatabaseReference
+
+        fun bind(inviteRequest: InvitationDataModel, databaseReference: DatabaseReference) {
             binding.sender.text = inviteRequest.sender
+            binding.acceptButton.setOnClickListener {
+                databaseReference.removeValue()
+                saveInConnections(inviteRequest.senderUid)
+            }
+            binding.ignoreButton.setOnClickListener {
+                databaseReference.removeValue()
+            }
+        }
+
+        private fun saveInConnections(senderUid: String){
+            database = Firebase.database.reference
+            database.child("connections").child(FirebaseAuth.getInstance().currentUser!!.uid).setValue(senderUid)
+            database.child("connections").child(senderUid).setValue(FirebaseAuth.getInstance().currentUser?.uid)
         }
 
         companion object{
@@ -31,7 +53,7 @@ class RequestListAdapter : ListAdapter<InvitationDataModel, RequestListAdapter.I
     }
 
     override fun onBindViewHolder(holder: InviteViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), requests[position])
     }
 }
 

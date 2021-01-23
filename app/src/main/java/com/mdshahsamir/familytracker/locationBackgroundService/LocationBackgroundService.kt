@@ -43,7 +43,8 @@ class LocationBackgroundService : BroadcastReceiver() {
     private fun updateLocationOnRemoteDatabase(location: Location){
         database = Firebase.database.reference
         database.child("location").child(auth.currentUser?.uid.toString())
-                .setValue(UserLocationDataModel(latitude = location.latitude,
+                .setValue(UserLocationDataModel(userId = auth.currentUser?.uid!!,
+                        latitude = location.latitude,
                         longitude = location.longitude,
                         userDisplayName = auth.currentUser?.displayName?: "Anonymous"))
     }

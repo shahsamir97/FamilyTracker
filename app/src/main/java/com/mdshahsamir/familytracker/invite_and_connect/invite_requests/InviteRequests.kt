@@ -26,6 +26,7 @@ class InviteRequests : Fragment() {
     private lateinit var requestListAdapter: RequestListAdapter
     private lateinit var binding: FragmentInviteRequestsBinding
     private var invitationList: ArrayList<InvitationDataModel> = ArrayList()
+    private var invitationReferences: ArrayList<DatabaseReference> = ArrayList()
 
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
@@ -42,7 +43,7 @@ class InviteRequests : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        requestListAdapter = RequestListAdapter()
+        requestListAdapter = RequestListAdapter(invitationReferences)
 
         binding.inviteRequestList.adapter = requestListAdapter
         binding.inviteRequestList.layoutManager = LinearLayoutManager(requireContext(),RecyclerView.VERTICAL, false)
@@ -52,10 +53,12 @@ class InviteRequests : Fragment() {
         database.child("invitations").addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 invitationList.clear()
+                invitationReferences.clear()
                 snapshot.children.forEach {
                     val invitation = it.getValue<InvitationDataModel>()
                     if (invitation != null && invitation.receiver == auth.currentUser?.email) {
                        invitationList.add(invitation)
+                        invitationReferences.add(it.ref)
                         Log.i("invitaions", invitation.toString())
                     }
                 }
