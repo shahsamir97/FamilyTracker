@@ -11,6 +11,12 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.gif.GifDrawable
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -31,7 +37,7 @@ class Login : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.login_fragment, container, false)
 
         Firebase.initialize(requireContext())
-
+        loginPageGIFAnimation()
         return binding.root
     }
 
@@ -45,6 +51,7 @@ class Login : Fragment() {
         if (auth.currentUser != null){
             findNavController().navigate(LoginDirections.actionLoginToMapsFragment())
         }
+
 
         binding.loginButton.setOnClickListener {
             if (!binding.username.text.isNullOrEmpty() && !binding.password.text.isNullOrEmpty()){
@@ -71,6 +78,29 @@ class Login : Fragment() {
         binding.createAccountText.setOnClickListener {
             it.findNavController().navigate(LoginDirections.actionLoginToRegisterUser())
         }
+    }
+
+    private fun loginPageGIFAnimation(){
+        Glide.with(requireContext()).asGif().load(R.drawable.login_page_gif_animation).listener(object :
+            RequestListener<GifDrawable?> {
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: Target<GifDrawable?>?,
+                isFirstResource: Boolean
+            ): Boolean {
+                return false
+            }
+            override fun onResourceReady(
+                resource: GifDrawable?,
+                model: Any?,
+                target: Target<GifDrawable?>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
+                return false
+            }
+        }).into(binding.gifAnimation)
     }
 
 }

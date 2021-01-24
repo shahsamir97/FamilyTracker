@@ -95,6 +95,11 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
         binding.floatingActionButton.setOnClickListener {
             findNavController().navigate(R.id.inviteAndConnect)
         }
+
+        binding.floatingActionButton2.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            findNavController().navigate(MapsFragmentDirections.actionMapsFragmentToLogin())
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -145,10 +150,10 @@ class MapsFragment : Fragment(),OnMapReadyCallback, LocationListener {
             Log.i("MAPS", connectedMember.size.toString())
             database.child("location").addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    mMap.clear()
                     snapshot.children.forEach {
                         for (member in connectedMember) {
                             if (member == it.key){
-                                mMap.clear()
                                 val location = it.getValue<UserLocationDataModel>()
                                 if (location != null) {
                                     mMap.addMarker(MarkerOptions()

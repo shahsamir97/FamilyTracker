@@ -7,59 +7,132 @@
 
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".login_register.login.Login"
-        android:orientation="vertical"
-        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-        android:layout_marginVertical="@dimen/activity_vertical_margin"
-        android:gravity="center">
+        android:padding="@dimen/activity_horizontal_margin">
 
-       <com.google.android.material.textfield.TextInputLayout
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-           app:boxCornerRadiusTopStart="10dp"
-           app:boxCornerRadiusTopEnd="10dp"
-           app:boxCornerRadiusBottomStart="8dp"
-           app:boxCornerRadiusBottomEnd="8dp"
-           android:layout_margin="10dp"
-           android:hint="@string/your_email">
-           <com.google.android.material.textfield.TextInputEditText
-               android:id="@+id/username"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"/>
-       </com.google.android.material.textfield.TextInputLayout>
+        <LinearLayout
+            android:id="@+id/textShows"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_alignParentTop="true">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Welcome To"
+                android:textStyle="bold"
+                android:textColor="@color/login_button_color"
+                android:gravity="start"
+                android:textSize="18sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Family Tracker"
+                android:textStyle="bold"
+                android:textColor="@color/login_button_color"
+                android:gravity="start"
+                android:textSize="35sp"/>
+        </LinearLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
+
+
+        <LinearLayout
+            android:id="@+id/inputFields"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".login_register.login.Login"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/gifAnimation"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
+                android:background="@android:color/black"
+                android:scaleType="centerCrop"
+                android:src="@drawable/login_page_gif_animation"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusBottomEnd="8dp"
+                android:layout_margin="10dp"
+                android:hint="@string/your_email"
+                android:elevation="6dp"
+                android:background="@color/login_page_text_input">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/login_page_text_input"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusBottomEnd="8dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:hint="@string/password"
+                android:background="@color/login_page_text_input"
+                android:elevation="6dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/login_page_text_input"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/loginButton"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:layout_margin="10dp"
+                app:icon="@drawable/long_arrow_icon"
+                app:iconGravity="end"
+                android:textAlignment="textStart"
+                android:textStyle="bold"
+                android:text="@string/login"
+                app:cornerRadius="10dp"
+                android:elevation="8dp"
+                android:backgroundTint="@color/login_button_color" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            app:boxCornerRadiusTopStart="10dp"
-            app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusBottomStart="8dp"
-            app:boxCornerRadiusBottomEnd="8dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:hint="@string/password">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/loginButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="@string/login" />
-
-        <TextView
-            android:id="@+id/createAccountText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/create_an_account"/>
-
-    </LinearLayout>
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:padding="10dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Forget Password"
+                android:textStyle="bold"
+                android:textColor="@color/login_button_color"
+                android:gravity="start" />
+            <TextView
+                android:id="@+id/createAccountText"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Create Account"
+                android:textStyle="bold"
+                android:textColor="@color/login_button_color"
+                android:gravity="end"
+                />
+        </LinearLayout>
+    </RelativeLayout>
 </layout>

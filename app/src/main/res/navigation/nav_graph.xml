@@ -12,7 +12,9 @@
         tools:layout="@layout/fragment_maps" >
         <action
             android:id="@+id/action_mapsFragment_to_login"
-            app:destination="@id/login" />
+            app:destination="@id/login"
+            app:popUpTo="@id/mapsFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
