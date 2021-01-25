@@ -10,6 +10,12 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.gif.GifDrawable
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.mdshahsamir.familytracker.R
@@ -47,11 +53,34 @@ class RegisterUser : Fragment() {
                                     "Failed to Sign up! Something went wrong! Try  again please",
                                     Toast.LENGTH_SHORT).show()
                         }
-
                         // ...
                     }
             }
         }
+        registerPageGIFAnimation()
+    }
+
+    private fun registerPageGIFAnimation(){
+        Glide.with(requireContext()).asGif().load(R.drawable.register_page_gif).listener(object :
+                RequestListener<GifDrawable?> {
+            override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<GifDrawable?>?,
+                    isFirstResource: Boolean
+            ): Boolean {
+                return false
+            }
+            override fun onResourceReady(
+                    resource: GifDrawable?,
+                    model: Any?,
+                    target: Target<GifDrawable?>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+            ): Boolean {
+                return false
+            }
+        }).into(binding.gifAnimation)
     }
 
     private fun updateUserProfile(){
