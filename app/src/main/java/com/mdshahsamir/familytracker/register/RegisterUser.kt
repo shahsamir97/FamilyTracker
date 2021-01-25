@@ -19,6 +19,7 @@ import com.bumptech.glide.request.target.Target
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.mdshahsamir.familytracker.R
+import com.mdshahsamir.familytracker.Util
 import com.mdshahsamir.familytracker.databinding.RegisterUserFragmentBinding
 
 class RegisterUser : Fragment() {
@@ -41,11 +42,12 @@ class RegisterUser : Fragment() {
         auth = FirebaseAuth.getInstance()
 
         binding.registerButton.setOnClickListener {
+            binding.registerButton.isEnabled = false
+            Util.showLoadingAnimation(requireContext())
             if (binding.username.text.toString().isNotEmpty() && binding.password.text.toString().isNotEmpty()){
                 auth.createUserWithEmailAndPassword(binding.username.text.toString().trim(), binding.password.text.toString().trim())
                     .addOnCompleteListener(requireActivity()) { task ->
                         if (task.isSuccessful) {
-                            // Sign in success, update UI with the signed-in user's information
                            updateUserProfile()
                         } else {
                             // Sign in failed
@@ -89,6 +91,7 @@ class RegisterUser : Fragment() {
                 .build()
         FirebaseAuth.getInstance()
                 .currentUser?.updateProfile(profileChangeRequest)?.addOnSuccessListener {
+                    Util.closeLoadingAnim()
             findNavController().navigate(RegisterUserDirections.actionRegisterUserToMapsFragment())
         }
     }

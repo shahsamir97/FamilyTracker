@@ -1,5 +1,6 @@
 package com.mdshahsamir.familytracker.login_register.login
 
+import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
@@ -7,8 +8,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -23,6 +27,7 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.initialize
 import com.mdshahsamir.familytracker.R
+import com.mdshahsamir.familytracker.Util
 import com.mdshahsamir.familytracker.databinding.LoginFragmentBinding
 
 class Login : Fragment() {
@@ -36,15 +41,22 @@ class Login : Fragment() {
                               savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.login_fragment, container, false)
 
+
+
+
+
         Firebase.initialize(requireContext())
         loginPageGIFAnimation()
         return binding.root
+
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
+
 
         auth = FirebaseAuth.getInstance()
 
@@ -54,6 +66,8 @@ class Login : Fragment() {
 
 
         binding.loginButton.setOnClickListener {
+            binding.loginButton.isEnabled = false
+            Util.showLoadingAnimation(requireContext())
             if (!binding.username.text.isNullOrEmpty() && !binding.password.text.isNullOrEmpty()){
                 try {
                     auth.signInWithEmailAndPassword(binding.username.text.toString().trim(), binding.password.text.toString().trim())
@@ -61,12 +75,15 @@ class Login : Fragment() {
                             if (task.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Snackbar.make(binding.root,"Login Successful", Snackbar.LENGTH_LONG).show()
+                                binding.loginButton.isEnabled = true
+                                Util.closeLoadingAnim()
                                 it.findNavController().navigate(LoginDirections.actionLoginToMapsFragment())
                             } else {
                                 Log.e("Error :", task.exception.toString())
                             }
                         }.addOnFailureListener {
-                            it.printStackTrace()
+                                binding.loginButton.isEnabled = true
+                                it.printStackTrace()
                                 Snackbar.make(binding.root,"Login Failed", Snackbar.LENGTH_LONG).show()
                             }
                 } catch (e: Exception) {
@@ -102,5 +119,6 @@ class Login : Fragment() {
             }
         }).into(binding.gifAnimation)
     }
+
 
 }

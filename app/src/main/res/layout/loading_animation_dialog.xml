@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/loading_animation_background"
+    android:gravity="center"
+    android:padding="20dp">
+
+    <ImageView
+        android:id="@+id/gifAnimation"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/loading_anim_gif"
+        android:scaleType="centerCrop"/>
+
+</LinearLayout>
